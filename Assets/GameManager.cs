@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour {
 
 	public static GameManager instance { get; private set; }
 
+	public int NumberOfColors;
 	public float CascadeSpeed;
 	public float LineResolveSpeed;
 	public float LineResolveIncreaseSpeed;
@@ -45,6 +46,8 @@ public class GameManager : MonoBehaviour {
 	public List<GameObject> TotalNodes = new List<GameObject>();
 
 	public Vector3 TouchPosition;
+
+	public int DotName;
 
 	void Awake ()
 	{
@@ -101,9 +104,8 @@ public class GameManager : MonoBehaviour {
 		{
 			for(int y= 0; y < Rows; y++)
 			{
-				GameObject NewNode = Instantiate(NodeObj,new Vector3(xpos, 1, ypos),Quaternion.Euler(90,0,0))as GameObject;
-				NewNode.transform.parent = NodeHolder.transform;
-				NewNode.GetComponent<NodeManager>().PickColor();
+				Vector3 SpawnPos = new Vector3(xpos, 1, ypos);
+				GameObject NewNode = CreateANewNode(SpawnPos);
 
 				ypos -= SpacingDistance;
 			}
@@ -121,37 +123,11 @@ public class GameManager : MonoBehaviour {
 		for(int y = 0; y < Columns; y++)
 		{
 				GameObject NewNode = Instantiate(SpawnerObj,new Vector3(xpos, 1, ypos),Quaternion.Euler(90,0,0))as GameObject;
-				//NewNode.transform.parent = NodeHolder.transform;				
 				xpos -= SpacingDistance;
 		}
 	}
 
-	void PickLevel ()
-	{
-		if(!CurrentLevel)
-		{
-			GameObject TempCurrentLevel = LevelData.instance.Levels[Random.Range(0, LevelData.instance.Levels.Count)];
-			//Debug.Log(TempCurrentLevel);
-			CurrentLevel = Instantiate(TempCurrentLevel, Vector3.zero, Quaternion.identity) as GameObject;
-		}
 
-		SpwanCatchNodes ();
-	}
-
-	void SpwanCatchNodes ()
-	{
-		foreach(Transform T in CatchNodeHolder.transform)
-		{
-			Destroy(T.gameObject);
-		}
-
-		for(int x = 0; x < 5; x++)
-		{
-			GameObject NewCatchNode = Instantiate(CatchNodeRef, new Vector3(Random.Range(-3,3),1,Random.Range(-6,6)),Quaternion.identity) as GameObject;
-			NewCatchNode.transform.GetComponent<CatchNode>().SetUpCatchNode(0);
-			NewCatchNode.transform.parent = CatchNodeHolder.transform;
-		}
-	}
 
 	void CheckHit ()
 	{
@@ -310,8 +286,6 @@ public class GameManager : MonoBehaviour {
 		Destroy(TempLastLine);
 		}
 
-
-
 	}
 
 	void StartLineResolve ()
@@ -327,36 +301,58 @@ public class GameManager : MonoBehaviour {
 			Debug.Log("Didn't Connect");
 			Destroy(CurrentDrawLine);
 			CurrentDrawLine = null;
+
+			if(Nodes[0])
+			{
+				Nodes[0].GetComponent<NodeManager>().IsMoving = false;
+			}
+
 			Nodes.Clear();
 		}
+	}
+
+	void CheckForReoccuringNodes ()
+	{
+		//Check if this node has been hit twice
+		TempDoubleIndexNumber = 0;
+		bool hitAnotherLikeMe = false; //so we don't get any higher than jsut the next in the row that is like me
+		for(int x = 1; x < Nodes.Count; x ++)
+		{
+			if(Nodes[x] == Nodes[0] && !hitAnotherLikeMe)
+			{
+				TempDoubleIndexNumber = x;
+				hitAnotherLikeMe = true;
+			}
+		}
+		
+		if(TempDoubleIndexNumber != 0)
+		{
+			GameObject newdot = CreateANewNode(Nodes[0].transform.position);
+			newdot.GetComponent<NodeManager>().SetColor(Nodes[0].GetComponent<NodeManager>().MyColor);
+			newdot.GetComponent<NodeManager>().IsMoving = true;
+			TempDoubleTouchedObj = newdot;
+		}
+	}
+
+	GameObject CreateANewNode (Vector3 pos)
+	{
+		GameObject NewNode = Instantiate(NodeObj,pos, Quaternion.Euler(90,0,0)) as GameObject;
+		NewNode.GetComponent<NodeManager>().PickColor();
+		NewNode.transform.parent = NodeHolder.transform;
+		NewNode.transform.name = "Node_" + DotName.ToString();
+		DotName ++;
+		return(NewNode);
+
 	}
 
 
 	void DoResolveLine ()
 	{
 
+		CheckForReoccuringNodes();
+
 		int z = 0;
 
-		//Check if this node has been hit twice
-		TempDoubleIndexNumber = 0;
-		for(int x = 1; x < Nodes.Count; x ++)
-		{
-			if(Nodes[x] == Nodes[z])
-			{
-				TempDoubleIndexNumber = x;
-			}
-		}
-
-
-		if(TempDoubleIndexNumber != 0)
-		{
-			GameObject newdot = Instantiate(NodeObj,Nodes[z].transform.position, Nodes[z].transform.rotation) as GameObject;
-			newdot.GetComponent<NodeManager>().SetColor(Nodes[z].GetComponent<NodeManager>().MyColor);
-			newdot.GetComponent<NodeManager>().IsMoving = true;
-			TempDoubleTouchedObj = newdot;
-		}
-
-		
 		//Move nodes
 		if(Nodes.Count > 1)
 		{
@@ -417,13 +413,14 @@ public class GameManager : MonoBehaviour {
 		}
 		else
 		{
+			//Put the newly created dot in the right spot on the node list
 			Nodes[TempDoubleIndexNumber] = TempDoubleTouchedObj;
 			TempDoubleIndexNumber = 0;
 
 			Nodes.Remove(TempLastNode);
 			Destroy(TempLastNode);
 		}
-		Destroy(TempLastNode);
+		//Destroy(TempLastNode);
 
 		//Remove Line From List of chained lines
 		GameObject TempLastLine = refLine;

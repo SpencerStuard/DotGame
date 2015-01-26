@@ -37,5 +37,7 @@ public class NodeSpawner : MonoBehaviour {
 		GameObject NewNode = Instantiate(NodeObj,new Vector3(transform.position.x, 1, transform.position.z - GameManager.instance.SpacingDistance),Quaternion.Euler(90,0,0))as GameObject;
 		NewNode.transform.parent = GameManager.instance.NodeHolder.transform;
 		NewNode.GetComponent<NodeManager>().PickColor();
+		NewNode.transform.name = "Node_" + GameManager.instance.DotName.ToString();
+		GameManager.instance.DotName ++;
 	}
 }
