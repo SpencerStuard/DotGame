@@ -164,7 +164,9 @@ public class GameManager : MonoBehaviour {
 			return;
 		}
 
-
+		//Drop Connection Line
+		//AddNodeToChain
+		//CreateNewConnection Node
 
 		//Drop the connection lines as we go
 		if(Nodes.Count >= 1)
@@ -351,26 +353,6 @@ public class GameManager : MonoBehaviour {
 			}
 
 		}
-
-//		//Check if this node has been hit twice
-//		TempDoubleIndexNumber = 0;
-//		bool hitAnotherLikeMe = false; //so we don't get any higher than jsut the next in the row that is like me
-//		for(int x = 1; x < Nodes.Count; x ++)
-//		{
-//			if(Nodes[x] == Nodes[0] && !hitAnotherLikeMe)
-//			{
-//				TempDoubleIndexNumber = x;
-//				hitAnotherLikeMe = true;
-//			}
-//		}
-//		
-//		if(TempDoubleIndexNumber != 0)
-//		{
-//			GameObject newdot = CreateANewNode(Nodes[0].transform.position);
-//			newdot.GetComponent<NodeManager>().SetColor(Nodes[0].GetComponent<NodeManager>().MyColor);
-//			newdot.GetComponent<NodeManager>().IsMatched = true;
-//			TempDoubleTouchedObj = newdot;
-//		}
 	}
 
 	GameObject CreateANewNode (Vector3 pos)
@@ -381,7 +363,6 @@ public class GameManager : MonoBehaviour {
 		NewNode.transform.name = "Node_" + DotName.ToString();
 		DotName ++;
 		return(NewNode);
-
 	}
 
 
