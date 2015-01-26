@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour {
 	public GameObject CatchNodeHolder;
 	public GameObject MeshHolder;
 	public GameObject NodeHolder;
+	public GameObject MeshContainer;
 	
 	//DYNAMIC VARS
 	public Vector3 TouchPosition;
@@ -301,6 +302,8 @@ public class GameManager : MonoBehaviour {
 	{
 		TempLineResolveSpeed = LineResolveSpeed;
 
+		CheckForLassoedNodes ();
+
 		foreach(GameObject G in Nodes)
 		{
 			G.GetComponent<NodeManager>().IsMoving = true;
@@ -326,6 +329,69 @@ public class GameManager : MonoBehaviour {
 
 			Nodes.Clear();
 		}
+	}
+
+	void CheckForLassoedNodes()
+	{
+		List<Vector2>NodePositions = new List<Vector2>();
+		Vector2[] vertices2D;
+
+
+		for(int n = 0; n < Nodes.Count; n ++) //Nodes to check
+		{
+			NodePositions.Add(new Vector2(Nodes[n].transform.position.x,Nodes[n].transform.position.z));//Start with the initcial node
+
+			for (int r = n + 1; r < Nodes.Count;r ++) //Nodes to check against
+			{
+				if(Nodes[n] == Nodes[r]) //Check if there is a loop in the chain
+				{
+					//hand off to make a mesh
+					vertices2D = NodePositions.ToArray();
+					Debug.Log(vertices2D.Length);
+					
+					MakeLassoArea(vertices2D);
+					//Debug.LogError("stop here");
+					//Clear the list for the next round
+					NodePositions.Clear();
+					break;
+				}
+
+				else if (r == Nodes.Count - 1)//we reached the end and there were no matches
+				{
+					//Clear Nodeposition list
+					NodePositions.Clear();
+					break;
+				}
+
+				NodePositions.Add(new Vector2(Nodes[r].transform.position.x,Nodes[r].transform.position.z));//Down here so we dont get the last one
+			}
+		}
+	}
+
+	void MakeLassoArea (Vector2[] v)
+	{
+		Triangulator tr = new Triangulator(v);
+		int[] indices = tr.Triangulate();
+
+		// Create the Vector3 vertices
+		Vector3[] vertices = new Vector3[v.Length];
+		for (int i=0; i<vertices.Length; i++) {
+			vertices[i] = new Vector3(v[i].x, v[i].y, 0);
+		}
+		
+		// Create the mesh
+		Mesh msh = new Mesh();
+		msh.vertices = vertices;
+		msh.triangles = indices;
+		msh.RecalculateNormals();
+		msh.RecalculateBounds();
+		
+		// Set up game object with mesh;
+		GameObject BLAH = Instantiate(MeshContainer,Vector3.up,Quaternion.identity)as GameObject;
+		BLAH.AddComponent(typeof(MeshRenderer));
+		MeshFilter filter = BLAH.AddComponent(typeof(MeshFilter)) as MeshFilter;
+		filter.mesh = msh;
+		Debug.LogError("MADE IT TO END OF MESH MAKER");
 	}
 
 	void CheckForReoccuringNodes ()
