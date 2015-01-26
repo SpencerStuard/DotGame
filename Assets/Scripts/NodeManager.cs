@@ -37,7 +37,7 @@ public class NodeManager : MonoBehaviour {
 
 	public void PickColor ()
 	{
-		MyColor = (NodeColors)Random.Range(((int)NodeColors.First + 1), (int)NodeColors.Last - 2 );
+		MyColor = (NodeColors)Random.Range(((int)NodeColors.First + 1), GameManager.instance.NumberOfColors );
 		//Debug.Log((int)MyColor);
 		switch(MyColor)
 		{
