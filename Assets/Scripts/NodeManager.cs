@@ -162,7 +162,7 @@ public class NodeManager : MonoBehaviour {
 			BottomRowFlag = true;
 		}
 	}
-
+	
 	public void HandOverVars (GameObject G)
 	{
 		if (G.GetComponent<NodeManager>())
@@ -173,6 +173,7 @@ public class NodeManager : MonoBehaviour {
 			G.GetComponent<NodeManager>().IsMoving = this.IsMoving;
 			G.GetComponent<NodeManager>().CascadeFlag = this.CascadeFlag;
 			G.GetComponent<NodeManager>().ConnectedNodes = this.ConnectedNodes;
+			G.GetComponent<NodeManager>().SetColor(this.MyColor);
 		}
 	}
 }

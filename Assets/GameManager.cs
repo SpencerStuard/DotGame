@@ -478,6 +478,7 @@ public class GameManager : MonoBehaviour {
 		TempLastNode.GetComponent<NodeManager>().BottomRowCheck();
 		TempLastNode.GetComponent<NodeManager>().IsMatched = false;
 		TempLastNode.GetComponent<NodeManager>().IsMoving = false;
+		TempLastNode.GetComponent<NodeManager>().ClearMyConnectedNodes();
 		Nodes.Remove(TempLastNode);
 		Nodes.Clear();
 
