@@ -328,25 +328,49 @@ public class GameManager : MonoBehaviour {
 
 	void CheckForReoccuringNodes ()
 	{
-		//Check if this node has been hit twice
-		TempDoubleIndexNumber = 0;
-		bool hitAnotherLikeMe = false; //so we don't get any higher than jsut the next in the row that is like me
+
+		List<int> ListIndexNum = new List<int>();
+
 		for(int x = 1; x < Nodes.Count; x ++)
 		{
-			if(Nodes[x] == Nodes[0] && !hitAnotherLikeMe)
+			if(Nodes[x] == Nodes[0])
 			{
-				TempDoubleIndexNumber = x;
-				hitAnotherLikeMe = true;
+				ListIndexNum.Add(x);//Get all the spots the dot is referrenced in the Nodes list
 			}
 		}
-		
-		if(TempDoubleIndexNumber != 0)
+
+		if(ListIndexNum.Count > 0)
 		{
-			GameObject newdot = CreateANewNode(Nodes[0].transform.position);
-			newdot.GetComponent<NodeManager>().SetColor(Nodes[0].GetComponent<NodeManager>().MyColor);
-			newdot.GetComponent<NodeManager>().IsMatched = true;
-			TempDoubleTouchedObj = newdot;
+			GameObject NewNode = CreateANewNode(Nodes[ListIndexNum[0]].transform.position);//Position
+			//NewNode.transform.position = Nodes[ListIndexNum[0]].transform.position;//Postion
+			Nodes[ListIndexNum[0]].GetComponent<NodeManager>().HandOverVars(NewNode);//HandOverVars
+
+			for(int x = 0; x < ListIndexNum.Count; x ++)
+			{
+				Nodes[ListIndexNum[x]] = NewNode;
+			}
+
 		}
+
+//		//Check if this node has been hit twice
+//		TempDoubleIndexNumber = 0;
+//		bool hitAnotherLikeMe = false; //so we don't get any higher than jsut the next in the row that is like me
+//		for(int x = 1; x < Nodes.Count; x ++)
+//		{
+//			if(Nodes[x] == Nodes[0] && !hitAnotherLikeMe)
+//			{
+//				TempDoubleIndexNumber = x;
+//				hitAnotherLikeMe = true;
+//			}
+//		}
+//		
+//		if(TempDoubleIndexNumber != 0)
+//		{
+//			GameObject newdot = CreateANewNode(Nodes[0].transform.position);
+//			newdot.GetComponent<NodeManager>().SetColor(Nodes[0].GetComponent<NodeManager>().MyColor);
+//			newdot.GetComponent<NodeManager>().IsMatched = true;
+//			TempDoubleTouchedObj = newdot;
+//		}
 	}
 
 	GameObject CreateANewNode (Vector3 pos)

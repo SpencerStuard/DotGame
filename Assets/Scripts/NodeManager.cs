@@ -162,4 +162,17 @@ public class NodeManager : MonoBehaviour {
 			BottomRowFlag = true;
 		}
 	}
+
+	public void HandOverVars (GameObject G)
+	{
+		if (G.GetComponent<NodeManager>())
+		{
+			G.GetComponent<NodeManager>().MyColor = this.MyColor;
+			G.GetComponent<NodeManager>().BottomRowFlag = this.BottomRowFlag;
+			G.GetComponent<NodeManager>().IsMatched = this.IsMatched;
+			G.GetComponent<NodeManager>().IsMoving = this.IsMoving;
+			G.GetComponent<NodeManager>().CascadeFlag = this.CascadeFlag;
+			G.GetComponent<NodeManager>().ConnectedNodes = this.ConnectedNodes;
+		}
+	}
 }
