@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour {
 	public GameObject CatchNodeRef;
 
 
-	public bool DrawingLine = false;
+	public bool IsResolving = false;
 
 	public List<GameObject> Nodes = new List<GameObject>();
 	public List<GameObject> Lines = new List<GameObject>();
@@ -67,12 +67,17 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		 
-		if (Input.GetMouseButton (0)) 
+		if (Input.GetMouseButtonDown (0) && !IsResolving) 
+		{
+			ResetTouchVars ();
+		}
+
+		if (Input.GetMouseButton (0) && !IsResolving) 
 		{
 			CheckHit ();
 		}
 
-		if (Input.GetMouseButtonUp (0)) 
+		if (Input.GetMouseButtonUp (0) && !IsResolving) 
 		{
 			EndRound ();
 		}
@@ -127,6 +132,14 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+	void ResetTouchVars ()
+	{
+		if(Lines.Count > 0)
+		{
+			Lines.Clear();
+		}
+	}
+
 
 
 	void CheckHit ()
@@ -147,17 +160,13 @@ public class GameManager : MonoBehaviour {
 
 	void HitNode (GameObject H)
 	{
-		//Make sure new dot isn't the one of the last 2 you have touched
-		if(LastSelectedDot == H || SecondToLastSelectedDot == H)
+		//Make sure new dot isn't the one of the last 2 you have touched and is not moving
+		if(LastSelectedDot == H || SecondToLastSelectedDot == H || H.GetComponent<NodeManager>().IsMoving )
 		{
 			return;
 		}
 
-		//Start flag that we are drawing a line
-		if(Nodes.Count == 0)
-		{
-			DrawingLine = true;
-		}
+
 
 		//Drop the connection lines as we go
 		if(Nodes.Count >= 1)
@@ -176,7 +185,7 @@ public class GameManager : MonoBehaviour {
 			PlaceConnectLine(H);
 		}
 
-		H.GetComponent<NodeManager>().IsMoving = true;
+		H.GetComponent<NodeManager>().IsMatched = true;
 
 		//Tell dots they are connected to each other
 		if(H.transform.GetComponent<NodeManager>() && LastSelectedDot != null)
@@ -270,7 +279,7 @@ public class GameManager : MonoBehaviour {
 
 	void EndRound ()
 	{
-		DrawingLine = false;
+		IsResolving = true;
 
 		LastSelectedDot = null;
 		SecondToLastSelectedDot = null;
@@ -291,6 +300,12 @@ public class GameManager : MonoBehaviour {
 	void StartLineResolve ()
 	{
 		TempLineResolveSpeed = LineResolveSpeed;
+
+		foreach(GameObject G in Nodes)
+		{
+			G.GetComponent<NodeManager>().IsMoving = true;
+		}
+
 		if(Nodes.Count > 1)
 		{
 			DoResolveLine ();
@@ -298,13 +313,15 @@ public class GameManager : MonoBehaviour {
 		}
 		else
 		{
-			Debug.Log("Didn't Connect");
+			//Debug.Log("Didn't Connect");
 			Destroy(CurrentDrawLine);
 			CurrentDrawLine = null;
+			IsResolving = false;
 
-			if(Nodes[0])
+			if(Nodes.Count > 0)
 			{
 				Nodes[0].GetComponent<NodeManager>().IsMoving = false;
+				Nodes[0].GetComponent<NodeManager>().IsMatched = false;
 			}
 
 			Nodes.Clear();
@@ -329,7 +346,7 @@ public class GameManager : MonoBehaviour {
 		{
 			GameObject newdot = CreateANewNode(Nodes[0].transform.position);
 			newdot.GetComponent<NodeManager>().SetColor(Nodes[0].GetComponent<NodeManager>().MyColor);
-			newdot.GetComponent<NodeManager>().IsMoving = true;
+			newdot.GetComponent<NodeManager>().IsMatched = true;
 			TempDoubleTouchedObj = newdot;
 		}
 	}
@@ -434,10 +451,10 @@ public class GameManager : MonoBehaviour {
 
 	void FinishLineResolve ()
 	{
-		//Set is moving to false
+		//Set vars on the last one in the line left
 		GameObject TempLastNode = Nodes[0];
 		TempLastNode.GetComponent<NodeManager>().BottomRowCheck();
-		TempLastNode.GetComponent<NodeManager>().IsMoving = false;
+		TempLastNode.GetComponent<NodeManager>().IsMatched = false;
 		Nodes.Remove(TempLastNode);
 		Nodes.Clear();
 
@@ -455,7 +472,7 @@ public class GameManager : MonoBehaviour {
 		}
 
 		//MakeDraw Line False
-		DrawingLine = false;
+		IsResolving = false;
 	}
 
 	void TryToDrawSteak ()

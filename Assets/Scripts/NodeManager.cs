@@ -13,6 +13,7 @@ public class NodeManager : MonoBehaviour {
 
 	bool BottomRowFlag;
 	public bool IsMoving;
+	public bool IsMatched = false;
 	bool CascadeFlag = false;
 	float RayDistance;
 
@@ -29,7 +30,7 @@ public class NodeManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(!BottomRowFlag && !CascadeFlag && !IsMoving)
+		if(!BottomRowFlag && !CascadeFlag && !IsMatched)
 		{
 			CheckForCascade();
 		}
@@ -109,7 +110,7 @@ public class NodeManager : MonoBehaviour {
 
 	void CheckForCascade ()
 	{
-		Debug.DrawRay(transform.position, Vector3.back * RayDistance, Color.blue);
+		//Debug.DrawRay(transform.position, Vector3.back * RayDistance, Color.blue);
 
 		if (Physics.Raycast(transform.position, Vector3.back, RayDistance))
 		{
@@ -123,6 +124,9 @@ public class NodeManager : MonoBehaviour {
 
 	void Cascade ()
 	{
+		//We are moving now
+		IsMoving = true;
+
 		//Set up parameters for update and complete functions
 
 		float zpos = transform.position.z - GameManager.instance.SpacingDistance;
@@ -148,6 +152,7 @@ public class NodeManager : MonoBehaviour {
 	{
 		BottomRowCheck();
 		CascadeFlag = false;
+		IsMoving = false;
 	}
 
 	public void BottomRowCheck ()
