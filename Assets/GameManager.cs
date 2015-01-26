@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour {
 
 	public static GameManager instance { get; private set; }
 
+	//EDITOR VARS
 	public int NumberOfColors;
 	public float CascadeSpeed;
 	public float LineResolveSpeed;
@@ -14,40 +15,37 @@ public class GameManager : MonoBehaviour {
 	public float MaxStrechDistance;
 	public float SpacingDistance = 2f;
 
+	//UI/SCORE VARS
 	int LineScore;
 	public int TotalScore;
 
-
-	float TempLineResolveSpeed;
-
+	//POINTER VARS
 	public GameObject SpawnerObj;
 	public GameObject DrawCubeObj;
 	public GameObject NodeObj;
-	public GameObject TempDoubleTouchedObj;
-	public int TempDoubleIndexNumber;
-
-	public GameObject LastSelectedDot;
-	public GameObject SecondToLastSelectedDot;
-	public GameObject CurrentDrawLine;
-
 	public GameObject ConnectionLineHolder;
 	public GameObject CatchNodeHolder;
 	public GameObject MeshHolder;
 	public GameObject NodeHolder;
+	
+	//DYNAMIC VARS
+	public Vector3 TouchPosition;
+	public int DotName;
+	float TempLineResolveSpeed;
+	public bool IsResolving = false;
+	public GameObject TempDoubleTouchedObj;
+	public int TempDoubleIndexNumber;
+	
+	public GameObject LastSelectedDot;
+	public GameObject SecondToLastSelectedDot;
+	public GameObject CurrentDrawLine;
 
 	public GameObject CurrentLevel;
 	public GameObject CatchNodeRef;
-
-
-	public bool IsResolving = false;
-
+	
 	public List<GameObject> Nodes = new List<GameObject>();
 	public List<GameObject> Lines = new List<GameObject>();
 	public List<GameObject> TotalNodes = new List<GameObject>();
-
-	public Vector3 TouchPosition;
-
-	public int DotName;
 
 	void Awake ()
 	{
@@ -455,6 +453,7 @@ public class GameManager : MonoBehaviour {
 		GameObject TempLastNode = Nodes[0];
 		TempLastNode.GetComponent<NodeManager>().BottomRowCheck();
 		TempLastNode.GetComponent<NodeManager>().IsMatched = false;
+		TempLastNode.GetComponent<NodeManager>().IsMoving = false;
 		Nodes.Remove(TempLastNode);
 		Nodes.Clear();
 
