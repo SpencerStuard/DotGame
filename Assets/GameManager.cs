@@ -339,12 +339,18 @@ public class GameManager : MonoBehaviour {
 
 		for(int n = 0; n < Nodes.Count; n ++) //Nodes to check
 		{
-			NodePositions.Add(new Vector2(Nodes[n].transform.position.x,Nodes[n].transform.position.z));//Start with the initcial node
+			//NodePositions.Add(new Vector2(Nodes[n].transform.position.x,Nodes[n].transform.position.z));//Start with the initcial node
 
-			for (int r = n + 1; r < Nodes.Count;r ++) //Nodes to check against
+			for (int r = Nodes.Count - 1; r > n;r --) //Start at the highest point on the list
 			{
 				if(Nodes[n] == Nodes[r]) //Check if there is a loop in the chain
 				{
+					//Add all the inbetween verts
+					for(int z = n; z < r; z ++)
+					{
+						NodePositions.Add(new Vector2(Nodes[z].transform.position.x,Nodes[z].transform.position.z));//Start with the initcial node
+					}
+
 					//hand off to make a mesh
 					vertices2D = NodePositions.ToArray();
 					Debug.Log(vertices2D.Length);
@@ -356,14 +362,14 @@ public class GameManager : MonoBehaviour {
 					break;
 				}
 
-				else if (r == Nodes.Count - 1)//we reached the end and there were no matches
+				else if (r == n)//we reached the end and there were no matches
 				{
 					//Clear Nodeposition list
 					NodePositions.Clear();
 					break;
 				}
 
-				NodePositions.Add(new Vector2(Nodes[r].transform.position.x,Nodes[r].transform.position.z));//Down here so we dont get the last one
+				//NodePositions.Add(new Vector2(Nodes[r].transform.position.x,Nodes[r].transform.position.z));//Down here so we dont get the last one
 			}
 		}
 	}
@@ -383,8 +389,9 @@ public class GameManager : MonoBehaviour {
 		Mesh msh = new Mesh();
 		msh.vertices = vertices;
 		msh.triangles = indices;
-		msh.RecalculateNormals();
+		//msh.RecalculateNormals();
 		msh.RecalculateBounds();
+
 		
 		// Set up game object with mesh;
 		GameObject BLAH = Instantiate(MeshContainer,Vector3.up,Quaternion.identity)as GameObject;
@@ -393,6 +400,11 @@ public class GameManager : MonoBehaviour {
 		filter.mesh = msh;
 		BLAH.transform.rotation = Quaternion.Euler(90,0,0); 
 		Debug.LogError("MADE IT TO END OF MESH MAKER");
+
+		for(int x = 0; x < msh.normals.Length; x ++)
+		{
+			msh.normals[x] = Vector3.up;
+		}
 	}
 
 	void CheckForReoccuringNodes ()
