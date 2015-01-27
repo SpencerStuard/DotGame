@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour {
 	public GameObject MeshHolder;
 	public GameObject NodeHolder;
 	public GameObject MeshContainer;
+	public Material CullingOffMat;
 	
 	//DYNAMIC VARS
 	public Vector3 TouchPosition;
@@ -389,7 +390,7 @@ public class GameManager : MonoBehaviour {
 		Mesh msh = new Mesh();
 		msh.vertices = vertices;
 		msh.triangles = indices;
-		//msh.RecalculateNormals();
+		msh.RecalculateNormals();
 		msh.RecalculateBounds();
 
 		
@@ -399,12 +400,9 @@ public class GameManager : MonoBehaviour {
 		MeshFilter filter = BLAH.AddComponent(typeof(MeshFilter)) as MeshFilter;
 		filter.mesh = msh;
 		BLAH.transform.rotation = Quaternion.Euler(90,0,0); 
+		BLAH.renderer.material = CullingOffMat;
+		BLAH.transform.parent = MeshHolder.transform;
 		Debug.LogError("MADE IT TO END OF MESH MAKER");
-
-		for(int x = 0; x < msh.normals.Length; x ++)
-		{
-			msh.normals[x] = Vector3.up;
-		}
 	}
 
 	void CheckForReoccuringNodes ()

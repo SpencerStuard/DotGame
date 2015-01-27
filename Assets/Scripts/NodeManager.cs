@@ -36,6 +36,16 @@ public class NodeManager : MonoBehaviour {
 		}
 	}
 
+	/*
+	void OnGUI() {
+		GUI.contentColor = Color.black;
+		Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position);
+		GUI.Label (new Rect (screenPos.x, screenPos.y * -1, 100, 30), transform.name);
+		//MyName.transform.position = transform.position;
+
+	}
+	*/
+
 	public void PickColor ()
 	{
 		MyColor = (NodeColors)Random.Range(((int)NodeColors.First + 1), GameManager.instance.NumberOfColors );
