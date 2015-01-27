@@ -180,7 +180,7 @@ public class NodeManager : MonoBehaviour {
 
 	public void BottomRowCheck ()
 	{
-		Debug.Log(GameManager.instance.BottomRowValue);
+		//Debug.Log(GameManager.instance.BottomRowValue);
 		if(transform.position.z <= (GameManager.instance.BottomRowValue + (GameManager.instance.SpacingDistance/3f)))
 		{
 			BottomRowFlag = true;
