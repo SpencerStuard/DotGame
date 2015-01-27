@@ -9,7 +9,7 @@ public class NodeSpawner : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		RayDistance = GameManager.instance.SpacingDistance + 1f;
+		RayDistance = GameManager.instance.SpacingDistance + (GameManager.instance.SpacingDistance/3);
 	}
 	
 	// Update is called once per frame

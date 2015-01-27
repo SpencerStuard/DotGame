@@ -14,6 +14,9 @@ public class GameManager : MonoBehaviour {
 	public float MinimumResolveSpeed;
 	public float MaxStrechDistance;
 	public float SpacingDistance = 2f;
+	public int Rows;
+	public int Columns;
+	public float ScreenEdgePadding;
 
 	//UI/SCORE VARS
 	int LineScore;
@@ -44,10 +47,16 @@ public class GameManager : MonoBehaviour {
 
 	public GameObject CurrentLevel;
 	public GameObject CatchNodeRef;
+
+	public float BottomRowValue;
 	
 	public List<GameObject> Nodes = new List<GameObject>();
 	public List<GameObject> Lines = new List<GameObject>();
 	public List<GameObject> TotalNodes = new List<GameObject>();
+
+	//EVENT AHNDLER
+	public delegate void LassoCheckEvent();
+	public event LassoCheckEvent LassoCheck;
 
 	void Awake ()
 	{
@@ -58,7 +67,7 @@ public class GameManager : MonoBehaviour {
 	void Start () {
 	
 		Application.targetFrameRate = 60;
-		BuildBoard (8,5);
+		BuildBoard (Rows,Columns);
 		ResetScore ();
 		//PickLevel ();
 
@@ -96,18 +105,42 @@ public class GameManager : MonoBehaviour {
 	}
 
 
-	void BuildBoard (int Rows, int Columns)
+	void BuildBoard (int rows, int columns)
 	{
-		float xpos = 4;
-		float ypos = 7;
+		//Get boarder units
+		Vector3 BL = Camera.main.ViewportToWorldPoint(new Vector3(0f, 0f,10f));
+		Vector3 TR = Camera.main.ViewportToWorldPoint(new Vector3(1f, 1f,10f));
+		Vector3 Origin = Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f,10f));
+		//Debug.LogError(BL);
+		//Debug.LogError(TR);
+
+		float XScreenDistance = Mathf.Abs(BL.x) + Mathf.Abs(TR.x) - ScreenEdgePadding; //Total usable screen space horizontal
+		SpacingDistance = XScreenDistance/columns;
+
+		float xpos = Origin.x + ((columns/2) * SpacingDistance);
+		if(columns % 2 == 0)
+		{
+			xpos -= (SpacingDistance/2);
+		}
+		float ypos = Origin.z + ((rows/2) * SpacingDistance);
+		if(rows % 2 == 0)
+		{
+			ypos -= (SpacingDistance/2);
+		}
 		float StartingYpos = ypos;
 		float StartingXpos = xpos;
 
-
-
-		for(int x = 0; x < Columns; x++)
+		//Set the bottomchecknumber
+		BottomRowValue = Origin.z - ((rows/2) * SpacingDistance);
+		if(rows % 2 == 0)
 		{
-			for(int y= 0; y < Rows; y++)
+			BottomRowValue += (SpacingDistance/2);
+		}
+
+
+		for(int x = 0; x < columns; x++)
+		{
+			for(int y= 0; y < rows; y++)
 			{
 				Vector3 SpawnPos = new Vector3(xpos, 1, ypos);
 				GameObject NewNode = CreateANewNode(SpawnPos);
@@ -303,7 +336,9 @@ public class GameManager : MonoBehaviour {
 	{
 		TempLineResolveSpeed = LineResolveSpeed;
 
-		CheckForLassoedNodes ();
+		LassoCheck();
+
+		//Debug.LogError("Break");
 
 		foreach(GameObject G in Nodes)
 		{
@@ -330,79 +365,6 @@ public class GameManager : MonoBehaviour {
 
 			Nodes.Clear();
 		}
-	}
-
-	void CheckForLassoedNodes()
-	{
-		List<Vector2>NodePositions = new List<Vector2>();
-		Vector2[] vertices2D;
-
-
-		for(int n = 0; n < Nodes.Count; n ++) //Nodes to check
-		{
-			//NodePositions.Add(new Vector2(Nodes[n].transform.position.x,Nodes[n].transform.position.z));//Start with the initcial node
-
-			for (int r = Nodes.Count - 1; r > n;r --) //Start at the highest point on the list
-			{
-				if(Nodes[n] == Nodes[r]) //Check if there is a loop in the chain
-				{
-					//Add all the inbetween verts
-					for(int z = n; z < r; z ++)
-					{
-						NodePositions.Add(new Vector2(Nodes[z].transform.position.x,Nodes[z].transform.position.z));//Start with the initcial node
-					}
-
-					//hand off to make a mesh
-					vertices2D = NodePositions.ToArray();
-					Debug.Log(vertices2D.Length);
-					
-					MakeLassoArea(vertices2D);
-					//Debug.LogError("stop here");
-					//Clear the list for the next round
-					NodePositions.Clear();
-					break;
-				}
-
-				else if (r == n)//we reached the end and there were no matches
-				{
-					//Clear Nodeposition list
-					NodePositions.Clear();
-					break;
-				}
-
-				//NodePositions.Add(new Vector2(Nodes[r].transform.position.x,Nodes[r].transform.position.z));//Down here so we dont get the last one
-			}
-		}
-	}
-
-	void MakeLassoArea (Vector2[] v)
-	{
-		Triangulator tr = new Triangulator(v);
-		int[] indices = tr.Triangulate();
-
-		// Create the Vector3 vertices
-		Vector3[] vertices = new Vector3[v.Length];
-		for (int i=0; i<vertices.Length; i++) {
-			vertices[i] = new Vector3(v[i].x, v[i].y, 0);
-		}
-		
-		// Create the mesh
-		Mesh msh = new Mesh();
-		msh.vertices = vertices;
-		msh.triangles = indices;
-		msh.RecalculateNormals();
-		msh.RecalculateBounds();
-
-		
-		// Set up game object with mesh;
-		GameObject BLAH = Instantiate(MeshContainer,Vector3.up,Quaternion.identity)as GameObject;
-		BLAH.AddComponent(typeof(MeshRenderer));
-		MeshFilter filter = BLAH.AddComponent(typeof(MeshFilter)) as MeshFilter;
-		filter.mesh = msh;
-		BLAH.transform.rotation = Quaternion.Euler(90,0,0); 
-		BLAH.renderer.material = CullingOffMat;
-		BLAH.transform.parent = MeshHolder.transform;
-		Debug.LogError("MADE IT TO END OF MESH MAKER");
 	}
 
 	void CheckForReoccuringNodes ()

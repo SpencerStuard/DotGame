@@ -11,11 +11,14 @@ public class NodeManager : MonoBehaviour {
 
 	//new public List<Color> PossibleColors = new List<Color>(); //Should Match Order Of Color Enum
 
+	bool PowerUp = false;
 	bool BottomRowFlag;
-	public bool IsMoving;
+	float BottomValue;
+	public bool IsMoving = false;
 	public bool IsMatched = false;
 	bool CascadeFlag = false;
 	float RayDistance;
+	bool isFirstFrame = true;
 
 	public NodeColors MyColor = NodeColors.First;
 
@@ -26,12 +29,22 @@ public class NodeManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		RayDistance = GameManager.instance.SpacingDistance;
+		GameManager.instance.LassoCheck += CheckIfIAmLassoed;
+		BottomValue = GameManager.instance.BottomRowValue;
+		//BottomRowCheck();
+		//Debug.LogError("Check Flag");
+	}
+
+	void OnDestroy ()
+	{
+		GameManager.instance.LassoCheck -= CheckIfIAmLassoed;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if(!BottomRowFlag && !CascadeFlag && !IsMatched)
 		{
+			//Debug.Log("Made it here");
 			CheckForCascade();
 		}
 	}
@@ -120,7 +133,7 @@ public class NodeManager : MonoBehaviour {
 
 	void CheckForCascade ()
 	{
-		//Debug.DrawRay(transform.position, Vector3.back * RayDistance, Color.blue);
+		Debug.DrawRay(transform.position, Vector3.back * RayDistance, Color.blue);
 
 		if (Physics.Raycast(transform.position, Vector3.back, RayDistance))
 		{
@@ -167,7 +180,8 @@ public class NodeManager : MonoBehaviour {
 
 	public void BottomRowCheck ()
 	{
-		if(transform.position.z <= -7)
+		Debug.Log(GameManager.instance.BottomRowValue);
+		if(transform.position.z <= (GameManager.instance.BottomRowValue + (GameManager.instance.SpacingDistance/3f)))
 		{
 			BottomRowFlag = true;
 		}
@@ -185,5 +199,112 @@ public class NodeManager : MonoBehaviour {
 			G.GetComponent<NodeManager>().ConnectedNodes = this.ConnectedNodes;
 			G.GetComponent<NodeManager>().SetColor(this.MyColor);
 		}
+	}
+
+	void SetUpPowerUp ()
+	{
+		PowerUp = true;
+		transform.renderer.material.color = Color.black;
+	}
+
+	void CheckIfIAmLassoed ()
+	{
+		if(!PowerUp && AmILassoed())
+		{
+			SetUpPowerUp();
+		}
+	}
+
+	bool AmILassoed ()
+	{
+		bool Left = false;
+		bool Right = false;
+		bool Up = false;
+		bool Down = false;
+
+		//Left
+		RaycastHit[] HitsLeft;
+		HitsLeft = Physics.RaycastAll(transform.position, -transform.right, 100.0F);
+		int i = 0;
+		while (i < HitsLeft.Length) 
+		{
+			RaycastHit hit = HitsLeft[i];
+			if (hit.transform.GetComponent<NodeManager>().IsMatched) 
+			{
+				Left = true;
+				break;
+			}
+			i++;
+		}
+
+		//Catch
+		if(Left == false)
+		{
+			return false;
+		}
+
+		//Right
+		RaycastHit[] HitsRight;
+		HitsRight = Physics.RaycastAll(transform.position, transform.right, 100.0F);
+		i = 0;
+		while (i < HitsRight.Length) 
+		{
+			RaycastHit hit = HitsRight[i];
+			if (hit.transform.GetComponent<NodeManager>().IsMatched) 
+			{
+				Right = true;
+				break;
+			}
+			i++;
+		}
+
+		if(Right == false)
+		{
+			return false;
+		}
+
+		//Up
+		RaycastHit[] HitsUp;
+		HitsUp = Physics.RaycastAll(transform.position, transform.up, 100.0F);
+		i = 0;
+		while (i < HitsUp.Length) 
+		{
+			RaycastHit hit = HitsUp[i];
+			if (hit.transform.GetComponent<NodeManager>().IsMatched) 
+			{
+				Up = true;
+				break;
+			}
+			i++;
+		}
+
+		if(Up == false)
+		{
+			return false;
+		}
+
+		//Down
+		RaycastHit[] HitsDown;
+		HitsDown = Physics.RaycastAll(transform.position, -transform.up, 100.0F);
+		i = 0;
+		while (i < HitsDown.Length) 
+		{
+			RaycastHit hit = HitsDown[i];
+			if (hit.transform.GetComponent<NodeManager>().IsMatched) 
+			{
+				Down = true;
+				break;
+			}
+			i++;
+		}
+		if(Down == false)
+		{
+			return false;
+		}
+		else{
+			Debug.Log(transform.name);
+			return true;
+		}
+
 	}
 }
