@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 
 public enum NodeColors{First,Red,Orange,Yellow,Blue,Green,Purple,Last};
 
 public class NodeManager : MonoBehaviour {
+
+	//POINTER VARS
+	public Text ComboText;
 
 	new public List<GameObject> ConnectedNodes = new List<GameObject>();
 
@@ -19,6 +23,7 @@ public class NodeManager : MonoBehaviour {
 	bool CascadeFlag = false;
 	float RayDistance;
 	bool isFirstFrame = true;
+	
 
 	public NodeColors MyColor = NodeColors.First;
 
@@ -28,6 +33,7 @@ public class NodeManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		ComboText.text = "";
 		RayDistance = GameManager.instance.SpacingDistance;
 		GameManager.instance.LassoCheck += CheckIfIAmLassoed;
 		BottomValue = GameManager.instance.BottomRowValue;
@@ -46,6 +52,10 @@ public class NodeManager : MonoBehaviour {
 		{
 			//Debug.Log("Made it here");
 			CheckForCascade();
+		}
+		if(IsMatched)
+		{
+			ComboText.text = ConnectedNodes.Count.ToString();
 		}
 	}
 
@@ -121,6 +131,7 @@ public class NodeManager : MonoBehaviour {
 	public void ClearMyConnectedNodes ()
 	{
 		ConnectedNodes.Clear();
+		ComboText.text = "";
 	}
 
 	public void AddConnectedNodes (GameObject G)
