@@ -391,6 +391,7 @@ public class GameManager : MonoBehaviour {
 		BLAH.AddComponent(typeof(MeshRenderer));
 		MeshFilter filter = BLAH.AddComponent(typeof(MeshFilter)) as MeshFilter;
 		filter.mesh = msh;
+		BLAH.transform.rotation = Quaternion.Euler(90,0,0); 
 		Debug.LogError("MADE IT TO END OF MESH MAKER");
 	}
 
