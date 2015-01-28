@@ -70,6 +70,11 @@ public class NodeManager : MonoBehaviour {
 		//iTween.PunchRotation(ComboText.gameObject, Vector3.forward * 360, 1);
 	}
 
+	public void SetComboTextTo(string s)
+	{
+		ComboText.text = s;
+	}
+
 	public void ScaleFillNodeUp ()
 	{
 		iTween.ScaleTo(NodeFill, Vector3.one, 1f);

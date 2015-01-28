@@ -364,6 +364,7 @@ public class GameManager : MonoBehaviour {
 				Nodes[0].GetComponent<NodeManager>().ScaleFillNodeDown();
 				Nodes[0].GetComponent<NodeManager>().IsMoving = false;
 				Nodes[0].GetComponent<NodeManager>().IsMatched = false;
+				Nodes[0].GetComponent<NodeManager>().SetComboTextTo("");
 			}
 
 			Nodes.Clear();
