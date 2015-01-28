@@ -67,10 +67,21 @@ public class GameManager : MonoBehaviour {
 	void Start () {
 	
 		Application.targetFrameRate = 60;
-		BuildBoard (Rows,Columns);
+		//BuildBoard (Rows,Columns);
 		ResetScore ();
 		//PickLevel ();
 
+		LaunchMainMenu ();
+
+
+	}
+
+	void LaunchMainMenu ()
+	{
+		UIManager.instance.LaunchMainMenuUI ();
+
+		//place dots
+		//GameObject PlaceStartDots = Instantiate(StartDots,position:,rot);
 	}
 	
 	// Update is called once per frame
