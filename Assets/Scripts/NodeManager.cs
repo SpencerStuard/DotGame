@@ -67,6 +67,7 @@ public class NodeManager : MonoBehaviour {
 	public void PunchScaleComboText ()
 	{
 		iTween.PunchScale(ComboText.gameObject, Vector3.one, .5f);
+		//iTween.PunchRotation(ComboText.gameObject, Vector3.forward * 360, 1);
 	}
 
 	public void ScaleFillNodeUp ()
@@ -252,7 +253,7 @@ public class NodeManager : MonoBehaviour {
 	void SetUpPowerUp ()
 	{
 		PowerUp = true;
-		transform.renderer.material.color = Color.black;
+		//transform.renderer.material.color = Color.black;
 	}
 
 	void CheckIfIAmLassoed ()

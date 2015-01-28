@@ -235,6 +235,7 @@ public class GameManager : MonoBehaviour {
 		//Tween scale when hit
 		iTween.PunchScale(H,Vector3.one,2);
 		H.GetComponent<NodeManager>().ScaleFillNodeUp();
+		H.GetComponent<NodeManager>().PunchScaleComboText();
 
 		LastSelectedDot = H;
 
