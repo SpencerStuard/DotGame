@@ -234,6 +234,7 @@ public class GameManager : MonoBehaviour {
 
 		//Tween scale when hit
 		iTween.PunchScale(H,Vector3.one,2);
+		H.GetComponent<NodeManager>().ScaleFillNodeUp();
 
 		LastSelectedDot = H;
 
@@ -359,6 +360,7 @@ public class GameManager : MonoBehaviour {
 
 			if(Nodes.Count > 0)
 			{
+				Nodes[0].GetComponent<NodeManager>().ScaleFillNodeDown();
 				Nodes[0].GetComponent<NodeManager>().IsMoving = false;
 				Nodes[0].GetComponent<NodeManager>().IsMatched = false;
 			}
@@ -498,6 +500,7 @@ public class GameManager : MonoBehaviour {
 		TempLastNode.GetComponent<NodeManager>().BottomRowCheck();
 		TempLastNode.GetComponent<NodeManager>().IsMatched = false;
 		TempLastNode.GetComponent<NodeManager>().IsMoving = false;
+		TempLastNode.GetComponent<NodeManager>().ScaleFillNodeDown();
 		TempLastNode.GetComponent<NodeManager>().ClearMyConnectedNodes();
 		Nodes.Remove(TempLastNode);
 		Nodes.Clear();

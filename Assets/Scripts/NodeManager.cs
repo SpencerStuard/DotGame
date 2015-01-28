@@ -10,6 +10,7 @@ public class NodeManager : MonoBehaviour {
 
 	//POINTER VARS
 	public Text ComboText;
+	public GameObject NodeFill;
 
 	new public List<GameObject> ConnectedNodes = new List<GameObject>();
 
@@ -33,6 +34,10 @@ public class NodeManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		if(!IsMatched)
+		{
+			NodeFill.transform.localScale = Vector3.zero;
+		}
 		ComboText.text = "";
 		RayDistance = GameManager.instance.SpacingDistance;
 		GameManager.instance.LassoCheck += CheckIfIAmLassoed;
@@ -59,6 +64,26 @@ public class NodeManager : MonoBehaviour {
 		}
 	}
 
+	public void PunchScaleComboText ()
+	{
+		iTween.PunchScale(ComboText.gameObject, Vector3.one, .5f);
+	}
+
+	public void ScaleFillNodeUp ()
+	{
+		iTween.ScaleTo(NodeFill, Vector3.one, 1f);
+	}
+
+	public void ScaleFillNodeDown ()
+	{
+		iTween.ScaleTo(NodeFill, Vector3.zero, 1f);
+	}
+
+	public void SetFillToFullScale ()
+	{
+		NodeFill.transform.localScale = Vector3.one;
+	}
+
 	/*
 	void OnGUI() {
 		GUI.contentColor = Color.black;
@@ -77,52 +102,63 @@ public class NodeManager : MonoBehaviour {
 		{
 		case NodeColors.Red:
 			transform.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Red];
+			NodeFill.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Red];
 			break;
 		case NodeColors.Orange:
 			transform.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Orange];
+			NodeFill.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Orange];
 			break;
 		case NodeColors.Yellow:
 			transform.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Yellow];
+			NodeFill.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Yellow];
 			break;
 		case NodeColors.Blue:
 			transform.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Blue];
+			NodeFill.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Blue];
 			break;
 		case NodeColors.Green:
 			transform.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Green];
+			NodeFill.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Green];
 			break;
 		case NodeColors.Purple:
 			transform.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Purple];
+			NodeFill.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Purple];
 			break;
 		}
 	}
 
 	public void SetColor (NodeColors c)
 	{
-
 		switch(c)
 		{
 		case NodeColors.Red:
 			transform.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Red];
+			NodeFill.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Red];
 			MyColor = NodeColors.Red;
 			break;
 		case NodeColors.Orange:
 			transform.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Orange];
+			NodeFill.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Orange];
 			MyColor = NodeColors.Orange;
 			break;
 		case NodeColors.Yellow:
 			transform.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Yellow];
+			NodeFill.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Yellow];
 			MyColor = NodeColors.Yellow;
 			break;
 		case NodeColors.Blue:
 			transform.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Blue];
+			NodeFill.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Blue];
 			MyColor = NodeColors.Blue;
 			break;
 		case NodeColors.Green:
 			transform.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Green];
+			NodeFill.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Green];
 			MyColor = NodeColors.Green;
 			break;
 		case NodeColors.Purple:
 			transform.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Purple];
+			NodeFill.GetComponent<SpriteRenderer>().color = ColorManager.instance.PossibleColors[(int)NodeColors.Purple];
 			MyColor = NodeColors.Purple;
 			break;
 		}
@@ -209,6 +245,7 @@ public class NodeManager : MonoBehaviour {
 			G.GetComponent<NodeManager>().CascadeFlag = this.CascadeFlag;
 			G.GetComponent<NodeManager>().ConnectedNodes = this.ConnectedNodes;
 			G.GetComponent<NodeManager>().SetColor(this.MyColor);
+			G.GetComponent<NodeManager>().NodeFill.transform.localScale = Vector3.one;
 		}
 	}
 
@@ -313,7 +350,7 @@ public class NodeManager : MonoBehaviour {
 			return false;
 		}
 		else{
-			Debug.Log(transform.name);
+			//Debug.Log(transform.name);
 			return true;
 		}
 
