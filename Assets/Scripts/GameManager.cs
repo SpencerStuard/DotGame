@@ -5,6 +5,9 @@ using System.Collections.Generic;
 public class GameManager : MonoBehaviour {
 
 	public static GameManager instance { get; private set; }
+	//GAMESTATE
+	public enum GameState{Null,MainMenu,Map,Game};
+	GameState CurrentGameState = GameState.Null;
 
 	//EDITOR VARS
 	public int NumberOfColors;
@@ -21,6 +24,7 @@ public class GameManager : MonoBehaviour {
 	//UI/SCORE VARS
 	int LineScore;
 	public int TotalScore;
+	public GameObject StartDots;
 
 	//POINTER VARS
 	public GameObject SpawnerObj;
@@ -58,6 +62,9 @@ public class GameManager : MonoBehaviour {
 	public delegate void LassoCheckEvent();
 	public event LassoCheckEvent LassoCheck;
 
+	public delegate void PlayGame();
+	public event PlayGame KillMainMenu;
+
 	void Awake ()
 	{
 		instance = this;
@@ -78,33 +85,60 @@ public class GameManager : MonoBehaviour {
 
 	void LaunchMainMenu ()
 	{
+		CurrentGameState = GameState.MainMenu;
 		UIManager.instance.LaunchMainMenuUI ();
 
 		//place dots
-		//GameObject PlaceStartDots = Instantiate(StartDots,position:,rot);
+		GameObject PlaceStartDots = Instantiate(StartDots,Vector3.up,Quaternion.Euler(0f,0f,0f))as GameObject;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		 
-		if (Input.GetMouseButtonDown (0) && !IsResolving) 
+		if(CurrentGameState == GameState.Game)
 		{
-			ResetTouchVars ();
+			if (Input.GetMouseButtonDown (0) && !IsResolving) 
+			{
+				ResetTouchVars ();
+			}
+
+			if (Input.GetMouseButton (0) && !IsResolving) 
+			{
+				CheckHit ();
+			}
+
+			if (Input.GetMouseButtonUp (0) && !IsResolving) 
+			{
+				EndRound ();
+			}
+
+			if(CurrentDrawLine)
+			{
+				DrawConnectLine ();
+			}
 		}
 
-		if (Input.GetMouseButton (0) && !IsResolving) 
+		if(CurrentGameState == GameState.MainMenu)
 		{
-			CheckHit ();
-		}
-
-		if (Input.GetMouseButtonUp (0) && !IsResolving) 
-		{
-			EndRound ();
-		}
-
-		if(CurrentDrawLine)
-		{
-			DrawConnectLine ();
+			if (Input.GetMouseButtonDown (0) && !IsResolving) 
+			{
+				ResetTouchVars ();
+			}
+			
+			if (Input.GetMouseButton (0) && !IsResolving) 
+			{
+				CheckHit ();
+			}
+			
+			if (Input.GetMouseButtonUp (0) && !IsResolving) 
+			{
+				MainMenuEndRound ();
+			}
+			
+			if(CurrentDrawLine)
+			{
+				DrawConnectLine ();
+			}
 		}
 	
 	}
@@ -343,6 +377,50 @@ public class GameManager : MonoBehaviour {
 		Destroy(TempLastLine);
 		}
 
+	}
+
+	void MainMenuEndRound ()
+	{
+		IsResolving = true;
+		
+		LastSelectedDot = null;
+		SecondToLastSelectedDot = null;
+
+		//Clear the last none connected line
+		if(Lines.Count > 2)
+		{
+			StartLineResolve ();
+			GameObject TempLastLine = Lines[Lines.Count - 1];
+			Lines.Remove(TempLastLine);
+			Destroy(TempLastLine);
+			KillMainMenu();
+			CurrentGameState = GameState.Map;
+		}
+		else
+		{
+			//Debug.Log("Didn't Connect");
+			Destroy(CurrentDrawLine);
+			CurrentDrawLine = null;
+			IsResolving = false;
+			
+			for(int x = Nodes.Count - 1; x >= 0; x--)
+			{
+				Nodes[x].GetComponent<NodeManager>().ScaleFillNodeDown();
+				Nodes[x].GetComponent<NodeManager>().IsMoving = false;
+				Nodes[x].GetComponent<NodeManager>().IsMatched = false;
+				Nodes[x].GetComponent<NodeManager>().SetComboTextTo("");
+				Nodes[x].GetComponent<NodeManager>().ClearMyConnectedNodes();
+			}
+			for(int y = Lines.Count - 1; y >= 0; y--)
+			{
+				GameObject TempLastLine = Lines[y];
+				Lines.Remove(TempLastLine);
+				Destroy(TempLastLine);
+			}
+			
+			Nodes.Clear();
+			Lines.Clear();
+		}
 	}
 
 	void StartLineResolve ()

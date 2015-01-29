@@ -22,6 +22,8 @@ public class UIManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
+		GameManager.instance.KillMainMenu += KillMainMenu;
+
 		UIMenus.Add(MainMenuUI);
 	}
 	
@@ -40,6 +42,8 @@ public class UIManager : MonoBehaviour {
 
 	public void LaunchMainMenuUI ()
 	{
+		DisableAllUIMenus();
+
 		MainMenuUI.SetActive(true);
 
 		//Set all the letters of dots to 0
@@ -53,7 +57,7 @@ public class UIManager : MonoBehaviour {
 			G.GetComponent<Text>().color = col;
 
 			G.AddComponent<FadeText>();
-			G.GetComponent<FadeText>().DoFadeText(0f,1f,Random.Range(.5f,1.5f),Random.Range(.5f,1.5f),G);
+			G.GetComponent<FadeText>().DoFade(0f,1f,Random.Range(.5f,1.5f),Random.Range(.5f,1.5f),G);
 		}
 
 
@@ -63,4 +67,44 @@ public class UIManager : MonoBehaviour {
 
 		//Fade in teh three bottom dots super quick
 	}
+
+	void LaunchMapUI ()
+	{
+		DisableAllUIMenus();
+
+		//Enable map stuff
+
+		Debug.Log("Made it here");
+	}
+
+	void KillMainMenu ()
+	{
+		foreach(GameObject G in TitleLetters)
+		{
+			G.AddComponent<FadeText>();
+			G.GetComponent<FadeText>().DoFade(1f,0f,Random.Range(.5f,1.5f),0,G);
+		}
+		object[] parms = new object[2]{"LaunchMapUI", 1.5f};
+		StartCoroutine( "DelayFunctionCall",parms);
+	}
+
+	IEnumerator DelayFunctionCall (object[] parms)
+	{
+
+		string s = (string)parms[0]; 
+		float dt = (float)parms[1];
+
+		float timer = dt; 
+		
+		while (timer > 0)
+		{
+			//Debug.Log("Made it here");
+			yield return null; 
+			timer -= Time.deltaTime; 
+		}
+		
+		this.gameObject.SendMessage(s); 
+		 
+	}
+
 }

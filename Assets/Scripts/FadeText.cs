@@ -9,23 +9,59 @@ public class FadeText : MonoBehaviour {
 	GameObject TextObj;
 	Color TextColor;
 
+
+
 	// Use this for initialization
 	void Update () {
 
 	
 	}
-	
 
-	public void DoFadeText (float startVal, float endVal,float t,float delaytime, GameObject G)
+	public void DoFadeImage (float startVal, float endVal,float t,float delaytime, GameObject G)
 	{
 		if(!G.GetComponent<Text>())
 		{
 			Debug.LogError("FADE SCRIPT PUT ON NONE TEXT ELEMTN");
 			return;
 		}
-
+		
 		TextObj = G;
-		TextColor = TextObj.GetComponent<Text>().color;
+		TextColor = TextObj.GetComponent<SpriteRenderer>().color;
+		
+		StartAlpha = startVal;
+		
+		iTween.ValueTo( TextObj, iTween.Hash(
+			"delay", delaytime, 
+			"from", startVal,
+			"to", endVal,
+			"time", t,
+			"onupdatetarget", TextObj,
+			"onupdate", "tweenOnUpdateCallBack",
+			"easetype", iTween.EaseType.easeInOutCubic,
+			"oncompletetarget", TextObj,
+			"oncomplete", "finishtweened"
+			)
+		    );
+	}
+
+	
+
+	public void DoFade (float startVal, float endVal,float t,float delaytime, GameObject G)
+	{
+		TextObj = G;
+		if(TextObj.GetComponent<Text>())
+		{
+			TextColor = TextObj.GetComponent<Text>().color;
+		}
+		else if (TextObj.GetComponent<SpriteRenderer>())
+		{
+			TextColor = TextObj.GetComponent<SpriteRenderer>().color;
+		}
+		else
+		{
+			Debug.LogError("FADE SCRIPT PUT ON NONE TEXT ELEMTN");
+			return;
+		}
 
 		StartAlpha = startVal;
 
@@ -48,7 +84,17 @@ public class FadeText : MonoBehaviour {
 		//Debug.Log("in here");
 		StartAlpha = newValue;
 			TextColor.a = StartAlpha;
-		TextObj.GetComponent<Text>().color = TextColor;
+
+		if(TextObj.GetComponent<Text>())
+		{
+			TextColor = TextObj.GetComponent<Text>().color = TextColor;
+		}
+		else if (TextObj.GetComponent<SpriteRenderer>())
+		{
+			TextColor = TextObj.GetComponent<SpriteRenderer>().color = TextColor;
+		}
+
+		//TextObj.GetComponent<Text>().color = TextColor;
 		//Debug.Log( exampleInt );
 	}
 
