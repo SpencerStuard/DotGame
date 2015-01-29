@@ -93,6 +93,19 @@ public class UIManager : MonoBehaviour {
 		object[] parms = new object[2]{"LaunchMapUI", 1.5f};
 		StartCoroutine( "DelayFunctionCall",parms);
 	}
+
+	public void ClickedOnLevel (int LevNum)
+	{
+		MapRef.GetComponent<MapManager>().DisableMap();
+		//ADD SOUND
+		GameManager.instance.CurrentGameState = GameManager.GameState.PreScreen;
+		LoadPreScreen(LevNum);
+	}
+
+	void LoadPreScreen (int LevNum)
+	{
+
+	}
 	
 
 	IEnumerator DelayFunctionCall (object[] parms)

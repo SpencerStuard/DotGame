@@ -67,6 +67,14 @@ public class NodeManager : MonoBehaviour {
 		}
 	}
 
+	void OnMouseDown ()
+	{
+		if(isMapNode)
+		{
+			UIManager.instance.ClickedOnLevel( int.Parse( transform.name ));
+		}
+	}
+
 	public void PunchScaleComboText ()
 	{
 		iTween.PunchScale(ComboText.gameObject, Vector3.one, .5f);

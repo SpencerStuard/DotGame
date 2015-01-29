@@ -12,6 +12,11 @@ public class MapManager : MonoBehaviour {
 	public float StartZpos;
 	public float VerticalSpacing;
 	public float HorizontalSpacing;
+	Vector3 lastPos;
+	Vector3 delta;
+	float ScrollAmount;
+	Vector3 MoveAmount;
+	float MapDampening;
 
 	// Use this for initialization
 	void Start () {
@@ -20,13 +25,59 @@ public class MapManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
-		// if swipped move
+		if ( Input.GetMouseButtonDown(0) )
+		{
+			lastPos = Camera.main.ScreenToWorldPoint( Input.mousePosition );
+		}
+		else if ( Input.GetMouseButton(0) )
+		{
+			delta = Camera.main.ScreenToWorldPoint( Input.mousePosition ) - lastPos;
+			//delta = Camera.main.ScreenToWorldPoint(delta);
+			//Debug.Log(delta);
+			
+			// Do Stuff here
+
+			//Debug.Log( "delta X : " + delta.x );
+			//Debug.Log( "delta Y : " + delta.y );
+			
+			// End do stuff
+
+			lastPos = Camera.main.ScreenToWorldPoint( Input.mousePosition );
+
+
+		}
+
+		MoveAmount = new Vector3(transform.position.x, transform.position.y, transform.position.z + delta.z);
+		transform.position = MoveAmount;
+
+		delta = Vector3.Lerp(delta, Vector3.zero ,Time.deltaTime * MapDampening);
+
 	}
 	public void SetUpVars ()
 	{
 		VerticalSpacing = (GameManager.instance.TR.z - GameManager.instance.Origin.z) / 2; // Get a quarter of the screen height
 		StartZpos = GameManager.instance.BL.z + VerticalSpacing;
+		MapDampening = GameManager.instance.MapDamening;
+
+	}
+
+	void Scroll ()
+	{
+
+	}
+
+	void OnMouseDown ()
+	{
+		if(Input.GetMouseButton(0))
+			Debug.Log("touching");
+	}
+
+	public void DisableMap ()
+	{
+		foreach(GameObject G in ListOfLevelNodes)
+		{
+			iTween.ScaleTo(G, Vector3.zero, 0.25f);
+		}
 	}
 
 	public void LaunchMap ()
@@ -51,6 +102,9 @@ public class MapManager : MonoBehaviour {
 
 			//parent it under this
 			NewLevelNode.transform.parent = transform;
+
+			//AddLevelnodes to the master list
+			ListOfLevelNodes.Add(NewLevelNode);
 
 			//Set Color based on level type
 			switch(LevelManaer.instance.Levels[x].MyLevelType)

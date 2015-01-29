@@ -6,8 +6,8 @@ public class GameManager : MonoBehaviour {
 
 	public static GameManager instance { get; private set; }
 	//GAMESTATE
-	public enum GameState{Null,MainMenu,Map,Game};
-	GameState CurrentGameState = GameState.Null;
+	public enum GameState{Null,MainMenu,Map,Game,PreScreen,PostScreen};
+	public GameState CurrentGameState = GameState.Null;
 
 	//EDITOR VARS
 	public int NumberOfColors;
@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour {
 	public int Rows;
 	public int Columns;
 	public float ScreenEdgePadding;
+	public float MapDamening;
 
 	//UI/SCORE VARS
 	int LineScore;
@@ -42,6 +43,7 @@ public class GameManager : MonoBehaviour {
 	public int DotName;
 	float TempLineResolveSpeed;
 	public bool IsResolving = false;
+	bool MapDownAndUpFlag = false;
 	public GameObject TempDoubleTouchedObj;
 	public int TempDoubleIndexNumber;
 	
@@ -148,6 +150,22 @@ public class GameManager : MonoBehaviour {
 			{
 				DrawConnectLine ();
 			}
+		}
+
+		if(CurrentGameState == GameState.Map)
+		{
+			/*
+			if (Input.GetMouseButtonDown (0) && !IsResolving) 
+			{
+				MapDownAndUpFlag = true;
+			}
+
+			if (Input.GetMouseButtonUp (0) && !IsResolving) 
+			{
+
+			}
+			*/
+
 		}
 	
 	}
