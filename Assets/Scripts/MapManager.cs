@@ -18,6 +18,10 @@ public class MapManager : MonoBehaviour {
 	Vector3 MoveAmount;
 	float MapDampening;
 
+	float BottomScrollLimit;
+	float TopScrollLimit;
+	Vector3 LimitSpring;
+
 	// Use this for initialization
 	void Start () {
 
@@ -47,29 +51,50 @@ public class MapManager : MonoBehaviour {
 
 		}
 
-		MoveAmount = new Vector3(transform.position.x, transform.position.y, transform.position.z + delta.z);
-		transform.position = MoveAmount;
-
-		delta = Vector3.Lerp(delta, Vector3.zero ,Time.deltaTime * MapDampening);
-
+		if(transform.position.z <= 0f && transform.position.z >= TopScrollLimit)
+		{
+			MoveAmount = new Vector3(transform.position.x, transform.position.y, transform.position.z + delta.z);
+			transform.position = MoveAmount;
+			delta = Vector3.Lerp(delta, Vector3.zero ,Time.deltaTime * MapDampening);
+		}
+		if(transform.position.z > 0f)
+		{
+			transform.position = new Vector3 (transform.position.x, transform.position.y, 0f);
+		}
+		if(transform.position.z < TopScrollLimit)
+		{
+			transform.position = new Vector3 (transform.position.x, transform.position.y, TopScrollLimit);
+		}
+		
+		/*
+		//ToLow
+		LimitSpring = Vector3.zero;
+		if(transform.position.z > BottomScrollLimit)
+		{
+			LimitSpring = new Vector3(0,0, (-.1f * (BottomScrollLimit + Mathf.Abs(transform.position.z))));
+			delta += LimitSpring;
+		}
+		//ToHigh
+		if(transform.position.z < TopScrollLimit)
+		{
+			LimitSpring = new Vector3(0,0, .1f * (TopScrollLimit + Mathf.Abs( transform.position.z)));
+			delta += LimitSpring;
+		}
+		*/
 	}
 	public void SetUpVars ()
 	{
 		VerticalSpacing = (GameManager.instance.TR.z - GameManager.instance.Origin.z) / 2; // Get a quarter of the screen height
 		StartZpos = GameManager.instance.BL.z + VerticalSpacing;
 		MapDampening = GameManager.instance.MapDamening;
+		BottomScrollLimit = StartZpos + (VerticalSpacing);
+		TopScrollLimit = -1 * ((BottomScrollLimit + (VerticalSpacing * LevelManaer.instance.Levels.Count)) - (VerticalSpacing));
 
 	}
 
 	void Scroll ()
 	{
 
-	}
-
-	void OnMouseDown ()
-	{
-		if(Input.GetMouseButton(0))
-			Debug.Log("touching");
 	}
 
 	public void DisableMap ()
