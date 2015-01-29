@@ -65,6 +65,11 @@ public class GameManager : MonoBehaviour {
 	public delegate void PlayGame();
 	public event PlayGame KillMainMenu;
 
+	//CONSTANT
+	public Vector3 BL;
+	public Vector3 TR;
+	public Vector3 Origin;
+
 	void Awake ()
 	{
 		instance = this;
@@ -72,13 +77,17 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
+
 	
 		Application.targetFrameRate = 60;
-		//BuildBoard (Rows,Columns);
+		BL = Camera.main.ViewportToWorldPoint(new Vector3(0f, 0f,10f));
+		TR = Camera.main.ViewportToWorldPoint(new Vector3(1f, 1f,10f));
+		Origin = Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f,10f));
 		ResetScore ();
-		//PickLevel ();
-
 		LaunchMainMenu ();
+
+
 
 
 	}
@@ -153,9 +162,7 @@ public class GameManager : MonoBehaviour {
 	void BuildBoard (int rows, int columns)
 	{
 		//Get boarder units
-		Vector3 BL = Camera.main.ViewportToWorldPoint(new Vector3(0f, 0f,10f));
-		Vector3 TR = Camera.main.ViewportToWorldPoint(new Vector3(1f, 1f,10f));
-		Vector3 Origin = Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f,10f));
+
 		//Debug.LogError(BL);
 		//Debug.LogError(TR);
 

@@ -10,6 +10,9 @@ public class UIManager : MonoBehaviour {
 	List<GameObject> UIMenus = new List<GameObject>();
 
 	public GameObject MainMenuUI;
+	public GameObject MapUI;
+
+	public GameObject MapRef;
 
 	public List<GameObject> TitleLetters = new List<GameObject>();
 
@@ -73,6 +76,9 @@ public class UIManager : MonoBehaviour {
 		DisableAllUIMenus();
 
 		//Enable map stuff
+		MapRef = Instantiate(MapUI,Vector3.up,Quaternion.Euler(0,0,0)) as GameObject;
+		MapRef.GetComponent<MapManager>().SetUpVars();
+		MapRef.GetComponent<MapManager>().LaunchMap();
 
 		Debug.Log("Made it here");
 	}
@@ -87,6 +93,7 @@ public class UIManager : MonoBehaviour {
 		object[] parms = new object[2]{"LaunchMapUI", 1.5f};
 		StartCoroutine( "DelayFunctionCall",parms);
 	}
+	
 
 	IEnumerator DelayFunctionCall (object[] parms)
 	{

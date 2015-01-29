@@ -13,9 +13,7 @@ public class NodeManager : MonoBehaviour {
 	public GameObject NodeFill;
 
 	new public List<GameObject> ConnectedNodes = new List<GameObject>();
-
-	//new public List<Color> PossibleColors = new List<Color>(); //Should Match Order Of Color Enum
-
+	
 	bool PowerUp = false;
 	bool BottomRowFlag;
 	float BottomValue;
@@ -24,12 +22,17 @@ public class NodeManager : MonoBehaviour {
 	bool CascadeFlag = false;
 	float RayDistance;
 	bool isFirstFrame = true;
+	public LevelStatus MyLevelStatus;
+	public bool isMapNode;
 	
 
 	public NodeColors MyColor = NodeColors.First;
 
 	void Awake () {
-		BottomRowCheck();
+		if(!isMapNode)
+		{
+			BottomRowCheck();
+		}
 	}
 
 	// Use this for initialization
@@ -53,7 +56,7 @@ public class NodeManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(!BottomRowFlag && !CascadeFlag && !IsMatched)
+		if(!BottomRowFlag && !CascadeFlag && !IsMatched && !isMapNode)
 		{
 			//Debug.Log("Made it here");
 			CheckForCascade();

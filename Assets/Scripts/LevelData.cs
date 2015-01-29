@@ -1,15 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
-public class LevelData : MonoBehaviour {
+public enum LevelType {Colections, Survive};
 
-	public static LevelData instance { get; private set; }
 
-	public List<GameObject> Levels = new List<GameObject>();
+[System.Serializable]
+ public class LevelData 
+{
 
-	// Use this for initialization
-	void Awake () {
-		instance = this;
-	}
+	public  int Rows;
+	public  int Columns;
+	public  int NumberOfColors;
+	public  LevelType MyLevelType;
+
+
 }
