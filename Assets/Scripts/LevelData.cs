@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public enum LevelType {Colections, Survive};
+public enum LevelType {Collect, Survive};
 
 
 [System.Serializable]

@@ -103,6 +103,20 @@ public class MapManager : MonoBehaviour {
 		{
 			iTween.ScaleTo(G, Vector3.zero, 0.25f);
 		}
+
+		object[] parms = new object[2]{"MessageLaunchPreScree", .3f};
+		StartCoroutine( "DelayFunctionCall",parms);
+	}
+
+	void MessageLaunchPreScree ()
+	{
+		foreach(GameObject G in ListOfLevelNodes)
+		{
+			Destroy(G);
+		}
+
+		UIManager.instance.LoadPreScreen ();
+		Destroy(gameObject);
 	}
 
 	public void LaunchMap ()
@@ -113,7 +127,7 @@ public class MapManager : MonoBehaviour {
 		for(int x = 0; x < LevelManaer.instance.Levels.Count; x ++)
 		{
 			//Get position for level node
-			Debug.Log(CurrentNodePosZ);
+			//Debug.Log(CurrentNodePosZ);
 			Vector3 levelnodePos = new Vector3 (0,1, CurrentNodePosZ);
 
 			//Create a levelnode
@@ -134,7 +148,7 @@ public class MapManager : MonoBehaviour {
 			//Set Color based on level type
 			switch(LevelManaer.instance.Levels[x].MyLevelType)
 			{
-			case LevelType.Colections:
+			case LevelType.Collect:
 				NewLevelNode.GetComponent<NodeManager>().SetColor(NodeColors.Red);
 				break;
 			case LevelType.Survive:
@@ -196,5 +210,25 @@ public class MapManager : MonoBehaviour {
 		B.center = ColliderPos;
 		B.size = ColliderScale;
 
+	}
+
+	IEnumerator DelayFunctionCall (object[] parms)
+	{
+		
+		string s = (string)parms[0]; 
+		float dt = (float)parms[1];
+		
+		float timer = dt; 
+		
+		while (timer > 0)
+		{
+			//Debug.Log("Made it here");
+			yield return null; 
+			timer -= Time.deltaTime; 
+		}
+
+
+		this.gameObject.SendMessage(s); 
+		
 	}
 }

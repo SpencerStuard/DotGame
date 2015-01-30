@@ -17,8 +17,8 @@ public class GameManager : MonoBehaviour {
 	public float MinimumResolveSpeed;
 	public float MaxStrechDistance;
 	public float SpacingDistance = 2f;
-	public int Rows;
-	public int Columns;
+	//public int Rows;
+	//public int Columns;
 	public float ScreenEdgePadding;
 	public float MapDamening;
 
@@ -176,9 +176,20 @@ public class GameManager : MonoBehaviour {
 		TotalScore = 0;
 	}
 
-
-	void BuildBoard (int rows, int columns)
+	void SetUpLevelTypeUI (LevelType currentlvltype)
 	{
+
+	}
+
+
+	public void BuildBoard (int LevelNumber)
+	{
+
+		int rows = LevelManaer.instance.Levels[LevelNumber].Rows;
+		int columns = LevelManaer.instance.Levels[LevelNumber].Columns;
+		NumberOfColors = LevelManaer.instance.Levels[LevelNumber].NumberOfColors;
+		SetUpLevelTypeUI(LevelManaer.instance.Levels[LevelNumber].MyLevelType);
+
 		//Get boarder units
 
 		//Debug.LogError(BL);
@@ -212,8 +223,8 @@ public class GameManager : MonoBehaviour {
 		{
 			for(int y= 0; y < rows; y++)
 			{
-				Vector3 SpawnPos = new Vector3(xpos, 1, ypos);
-				GameObject NewNode = CreateANewNode(SpawnPos);
+				//Vector3 SpawnPos = new Vector3(xpos, 1, ypos);
+				//GameObject NewNode = CreateANewNode(SpawnPos);
 
 				ypos -= SpacingDistance;
 			}
@@ -221,14 +232,14 @@ public class GameManager : MonoBehaviour {
 			xpos -= SpacingDistance;
 		}
 
-		PlaceSpawners(StartingXpos,StartingYpos,Columns);
+		PlaceSpawners(StartingXpos,StartingYpos,columns);
 	}
 
-	void PlaceSpawners(float xpos, float ypos, int Columns)
+	void PlaceSpawners(float xpos, float ypos, int columns)
 	{
 		ypos += SpacingDistance;
 
-		for(int y = 0; y < Columns; y++)
+		for(int y = 0; y < columns; y++)
 		{
 				GameObject NewNode = Instantiate(SpawnerObj,new Vector3(xpos, 1, ypos),Quaternion.Euler(90,0,0))as GameObject;
 				xpos -= SpacingDistance;

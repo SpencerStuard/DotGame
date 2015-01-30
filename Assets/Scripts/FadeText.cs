@@ -57,6 +57,10 @@ public class FadeText : MonoBehaviour {
 		{
 			TextColor = TextObj.GetComponent<SpriteRenderer>().color;
 		}
+		else if (TextObj.GetComponent<Image>())
+		{
+			TextColor = TextObj.GetComponent<Image>().color;
+		}
 		else
 		{
 			Debug.LogError("FADE SCRIPT PUT ON NONE TEXT ELEMTN");
@@ -92,6 +96,10 @@ public class FadeText : MonoBehaviour {
 		else if (TextObj.GetComponent<SpriteRenderer>())
 		{
 			TextColor = TextObj.GetComponent<SpriteRenderer>().color = TextColor;
+		}
+		else if (TextObj.GetComponent<Image>())
+		{
+			TextColor = TextObj.GetComponent<Image>().color = TextColor;
 		}
 
 		//TextObj.GetComponent<Text>().color = TextColor;

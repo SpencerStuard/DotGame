@@ -67,7 +67,7 @@ public class NodeManager : MonoBehaviour {
 		}
 	}
 
-	void OnMouseDown ()
+	void OnMouseUp ()
 	{
 		if(isMapNode)
 		{
