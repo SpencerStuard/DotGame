@@ -6,7 +6,7 @@ public class GameManager : MonoBehaviour {
 
 	public static GameManager instance { get; private set; }
 	//GAMESTATE
-	public enum GameState{Null,MainMenu,Map,Game,PreScreen,PostScreen};
+	public enum GameState{Null,MainMenu,Map,Game,PreScreen,PostScreen,Settings};
 	public GameState CurrentGameState = GameState.Null;
 
 	//EDITOR VARS
@@ -24,8 +24,7 @@ public class GameManager : MonoBehaviour {
 
 	//UI/SCORE VARS
 	int LineScore;
-	public int TotalScore;
-	public GameObject StartDots;
+
 
 	//POINTER VARS
 	public GameObject SpawnerObj;
@@ -39,6 +38,7 @@ public class GameManager : MonoBehaviour {
 	public Material CullingOffMat;
 	
 	//DYNAMIC VARS
+	public int TotalScore;
 	public Vector3 TouchPosition;
 	public int DotName;
 	float TempLineResolveSpeed;
@@ -87,21 +87,13 @@ public class GameManager : MonoBehaviour {
 		TR = Camera.main.ViewportToWorldPoint(new Vector3(1f, 1f,10f));
 		Origin = Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f,10f));
 		ResetScore ();
-		LaunchMainMenu ();
-
-
-
-
-	}
-
-	void LaunchMainMenu ()
-	{
-		CurrentGameState = GameState.MainMenu;
 		UIManager.instance.LaunchMainMenuUI ();
 
-		//place dots
-		GameObject PlaceStartDots = Instantiate(StartDots,Vector3.up,Quaternion.Euler(0f,0f,0f))as GameObject;
+
+
+
 	}
+
 	
 	// Update is called once per frame
 	void Update () {
@@ -415,7 +407,12 @@ public class GameManager : MonoBehaviour {
 
 	}
 
-	void MainMenuEndRound ()
+	public void GoToSettingsMenu()
+	{
+		KillMainMenu();
+	}
+
+	public void MainMenuEndRound ()
 	{
 		IsResolving = true;
 		
@@ -429,8 +426,9 @@ public class GameManager : MonoBehaviour {
 			GameObject TempLastLine = Lines[Lines.Count - 1];
 			Lines.Remove(TempLastLine);
 			Destroy(TempLastLine);
-			KillMainMenu();
 			CurrentGameState = GameState.Map;
+			KillMainMenu();
+
 		}
 		else
 		{

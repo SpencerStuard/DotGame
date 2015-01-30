@@ -26,7 +26,7 @@ public class StartDots : MonoBehaviour {
 			col.a = 0;
 			G.GetComponent<NodeManager>().SetColor(NodeColors.Red);
 			G.GetComponent<SpriteRenderer>().color = col;
-			G.AddComponent<FadeText>().DoFade(0,1,2,(x + 1f),G);
+			G.AddComponent<FadeText>().DoFade(0,1,.75f,(x + 1f),G);
 			x += .25f;
 		}
 	
@@ -37,8 +37,17 @@ public class StartDots : MonoBehaviour {
 		GameManager.instance.KillMainMenu -= KillMainMenu;
 	}
 
+	public void FadeAndKillUs()
+	{
+		foreach(GameObject G in StartDotsObj)
+		{
+			G.AddComponent<FadeText>().DoFade(1,0,.75f,0,G);
+		}
+	}
+
 	void KillMainMenu ()
 	{
+		Debug.Log("MADE IT IN EHRE");
 		float x = 0;
 		
 		foreach(GameObject G in StartDotsObj)
@@ -56,4 +65,7 @@ public class StartDots : MonoBehaviour {
 
 		gameObject.AddComponent<KillAfterSeconds>().KillMeAfterSeconds(1f);
 	}
+
+
+
 }

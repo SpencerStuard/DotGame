@@ -83,27 +83,37 @@ public class FadeText : MonoBehaviour {
 		    );
 	}
 
+	void OnDestroy ()
+	{
+		if(gameObject.GetComponent<iTween>())
+		Destroy(gameObject.GetComponent<iTween>());
+	}
+
 	void tweenOnUpdateCallBack( float newValue )
 	{
-		//Debug.Log("in here");
-		StartAlpha = newValue;
-			TextColor.a = StartAlpha;
+		if(TextObj)
+		{
+			//Debug.Log("in here");
+			StartAlpha = newValue;
+				TextColor.a = StartAlpha;
 
-		if(TextObj.GetComponent<Text>())
-		{
-			TextColor = TextObj.GetComponent<Text>().color = TextColor;
-		}
-		else if (TextObj.GetComponent<SpriteRenderer>())
-		{
-			TextColor = TextObj.GetComponent<SpriteRenderer>().color = TextColor;
-		}
-		else if (TextObj.GetComponent<Image>())
-		{
-			TextColor = TextObj.GetComponent<Image>().color = TextColor;
-		}
+			if(TextObj.GetComponent<Text>())
+			{
+				TextColor = TextObj.GetComponent<Text>().color = TextColor;
+			}
+			else if (TextObj.GetComponent<SpriteRenderer>())
+			{
+				TextColor = TextObj.GetComponent<SpriteRenderer>().color = TextColor;
+			}
+			else if (TextObj.GetComponent<Image>())
+			{
+				TextColor = TextObj.GetComponent<Image>().color = TextColor;
+			}
 
-		//TextObj.GetComponent<Text>().color = TextColor;
+			//TextObj.GetComponent<Text>().color = TextColor;
 		//Debug.Log( exampleInt );
+	
+		}
 	}
 
 	void finishtweened ()

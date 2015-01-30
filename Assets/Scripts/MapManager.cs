@@ -156,6 +156,12 @@ public class MapManager : MonoBehaviour {
 				break;
 			}
 
+			//Special Exception for the first Level
+			if(PlayerPrefs.GetInt("Level_1") < 1 ||!PlayerPrefs.HasKey("Level_"))
+			{
+				PlayerPrefs.SetInt("Level_1",1);
+			}
+
 			//Look for player prefs and set up locked/unloced/or beat //If beat put score
 			if(!PlayerPrefs.HasKey("Level_" + name.ToString()))
 			{
@@ -187,6 +193,8 @@ public class MapManager : MonoBehaviour {
 				break;
 
 			}
+
+
 
 			//Scale down and bounce in
 			NewLevelNode.transform.localScale = Vector3.zero;
